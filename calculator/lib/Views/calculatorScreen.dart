@@ -15,6 +15,7 @@ class _CalculatorScreenState extends State<CalculatorScreen> {
   late String text = '';
   int operatorIndex = -1;
   bool isTextEnabled = false;
+  bool opened = false;
 
   final List<Operatorr> operators = [
     Adding(),
@@ -24,9 +25,7 @@ class _CalculatorScreenState extends State<CalculatorScreen> {
     Mod()
   ];
 
-  final List<int> column1 = [1, 2, 3];
-  final List<int> column2 = [4, 5, 6];
-  final List<int> column3 = [7, 8, 9];
+  final List<int> digits = [1, 2, 3, 4, 5, 6, 7, 8, 9, 0];
 
   @override
   Widget build(BuildContext context) {
@@ -38,6 +37,7 @@ class _CalculatorScreenState extends State<CalculatorScreen> {
           Spacer(),
           Row(
             mainAxisAlignment: MainAxisAlignment.end,
+            crossAxisAlignment: CrossAxisAlignment.end,
             children: [
               Flexible(
                 child: Text(
@@ -73,93 +73,179 @@ class _CalculatorScreenState extends State<CalculatorScreen> {
             children: [
               Padding(
                 padding: const EdgeInsets.only(
-                    left: 16.0, right: 20.0, bottom: 8.0, top: 20),
+                    left: 8.0, right: 8.0, bottom: 8.0, top: 20),
                 child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  crossAxisAlignment: CrossAxisAlignment.end,
-                  children: column1
-                      .map(
-                        (e) => Container(
-                          margin: EdgeInsets.symmetric(vertical: 8.0),
-                          child: ElevatedButton(
-                            style: ElevatedButton.styleFrom(
-                              backgroundColor: Colors.white,
-                              shape: CircleBorder(),
-                              padding: EdgeInsets.all(24),
-                            ),
-                            onPressed: () {
-                              setState(() {
-                                if (firstOrSecond) {
-                                  num1 = num1 * 10 + e;
-                                } else {
-                                  isTextEnabled = true;
-                                  num2 = num2 * 10 + e;
-                                  result = operators[operatorIndex]
-                                      .operating(num1, num2);
-                                  num1 = result;
-                                }
-                                text += e.toString();
-                              });
-                            },
-                            child: Text(
-                              e.toString(),
-                              style: TextStyle(
-                                fontSize: 20,
-                                color: Colors.grey,
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    crossAxisAlignment: CrossAxisAlignment.end,
+                    children: [
+                      Container(
+                        decoration: BoxDecoration(
+                          color: Colors.white,
+                          shape: BoxShape.circle,
+                        ),
+                        padding: EdgeInsets.all(10),
+                        child: IconButton(
+                          icon: Icon(Icons.backspace, color: Colors.grey),
+                          iconSize: 25,
+                          onPressed: () {
+                            setState(() {
+                              if (text.isNotEmpty)
+                                text = text.substring(0, text.length - 1);
+                            });
+                          },
+                        ),
+                      ),
+                      ...digits
+                          .sublist(0, 3)
+                          .map(
+                            (e) => Container(
+                              margin: EdgeInsets.symmetric(vertical: 8.0),
+                              child: ElevatedButton(
+                                style: ElevatedButton.styleFrom(
+                                  backgroundColor: Colors.white,
+                                  shape: CircleBorder(),
+                                  padding: EdgeInsets.all(24),
+                                ),
+                                onPressed: () {
+                                  setState(() {
+                                    if (firstOrSecond) {
+                                      num1 = num1 * 10 + e;
+                                    } else {
+                                      isTextEnabled = true;
+                                      num2 = num2 * 10 + e;
+                                      result = operators[operatorIndex]
+                                          .operating(num1, num2);
+                                      num1 = result;
+                                    }
+                                    text += e.toString();
+                                  });
+                                },
+                                child: Text(
+                                  e.toString(),
+                                  style: TextStyle(
+                                    fontSize: 20,
+                                    color: Colors.grey,
+                                  ),
+                                ),
                               ),
                             ),
+                          )
+                          .toList(),
+                      ElevatedButton(
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: Colors.white,
+                          shape: CircleBorder(),
+                          padding: EdgeInsets.all(20),
+                        ),
+                        onPressed: () {},
+                        child: Text(
+                          '+/-',
+                          style: TextStyle(
+                            fontSize: 20,
+                            color: Colors.grey,
                           ),
                         ),
-                      )
-                      .toList(),
-                ),
+                      ),
+                    ]),
               ),
               Padding(
-                padding: const EdgeInsets.only(
-                    left: 16.0, right: 20.0, bottom: 8.0, top: 20),
+                padding: const EdgeInsets.only(left: 8.0, right: 8.0, top: 20),
                 child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  crossAxisAlignment: CrossAxisAlignment.end,
-                  children: column2
-                      .map(
-                        (e) => Container(
-                          margin: EdgeInsets.symmetric(vertical: 8.0),
-                          child: ElevatedButton(
-                            style: ElevatedButton.styleFrom(
-                              backgroundColor: Colors.white,
-                              shape: CircleBorder(),
-                              padding: EdgeInsets.all(24),
-                            ),
-                            onPressed: () {
-                              setState(() {
-                                if (firstOrSecond) {
-                                  num1 = num1 * 10 + e;
-                                } else {
-                                  isTextEnabled = true;
-                                  num2 = num2 * 10 + e;
-                                  result = operators[operatorIndex]
-                                      .operating(num1, num2);
-                                  num1 = result;
-                                }
-                                text += e.toString();
-                              });
-                            },
-                            child: Text(
-                              e.toString(),
-                              style: TextStyle(
-                                fontSize: 20,
-                                color: Colors.grey,
+                    mainAxisAlignment: MainAxisAlignment.end,
+                    crossAxisAlignment: CrossAxisAlignment.end,
+                    children: [
+                      ElevatedButton(
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: Colors.blue,
+                          shape: CircleBorder(),
+                          padding: EdgeInsets.all(24),
+                        ),
+                        onPressed: () {
+                          setState(() {
+                            if (!opened) {
+                              text += '(';
+                            } else {
+                              text += ')';
+                            }
+                            opened = !opened;
+                          });
+                        },
+                        child: Text(
+                          '( )',
+                          style: TextStyle(
+                            fontSize: 15,
+                            color: Colors.white,
+                          ),
+                        ),
+                      ),
+                      ...digits
+                          .sublist(3, 6)
+                          .map(
+                            (e) => Container(
+                              margin: EdgeInsets.symmetric(vertical: 8.0),
+                              child: ElevatedButton(
+                                style: ElevatedButton.styleFrom(
+                                  backgroundColor: Colors.white,
+                                  shape: CircleBorder(),
+                                  padding: EdgeInsets.all(24),
+                                ),
+                                onPressed: () {
+                                  setState(() {
+                                    if (firstOrSecond) {
+                                      num1 = num1 * 10 + e;
+                                    } else {
+                                      isTextEnabled = true;
+                                      num2 = num2 * 10 + e;
+                                      result = operators[operatorIndex]
+                                          .operating(num1, num2);
+                                      num1 = result;
+                                    }
+                                    text += e.toString();
+                                  });
+                                },
+                                child: Text(
+                                  e.toString(),
+                                  style: TextStyle(
+                                    fontSize: 20,
+                                    color: Colors.grey,
+                                  ),
+                                ),
                               ),
                             ),
+                          )
+                          .toList(),
+                      ElevatedButton(
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: Colors.white,
+                          shape: CircleBorder(),
+                          padding: EdgeInsets.all(24),
+                        ),
+                        onPressed: () {
+                          setState(() {
+                            if (firstOrSecond) {
+                              num1 = num1 * 10;
+                            } else {
+                              isTextEnabled = true;
+                              num2 = num2 * 10;
+                              result = operators[operatorIndex]
+                                  .operating(num1, num2);
+                              num1 = result;
+                            }
+                            text += '0';
+                          });
+                        },
+                        child: Text(
+                          '0',
+                          style: TextStyle(
+                            fontSize: 20,
+                            color: Colors.grey,
                           ),
                         ),
-                      )
-                      .toList(),
-                ),
+                      ),
+                    ]),
               ),
               Padding(
-                padding: const EdgeInsets.only(
-                    left: 16.0, right: 20.0, bottom: 8.0, top: 20),
+                padding: const EdgeInsets.only(left: 8.0, right: 8.0, top: 20),
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
                   crossAxisAlignment: CrossAxisAlignment.end,
@@ -198,7 +284,8 @@ class _CalculatorScreenState extends State<CalculatorScreen> {
                         ),
                       ),
                     ),
-                    ...column3
+                    ...digits
+                        .sublist(6, digits.length - 1)
                         .map((e) => Container(
                               margin: EdgeInsets.symmetric(vertical: 8.0),
                               child: ElevatedButton(
@@ -251,14 +338,13 @@ class _CalculatorScreenState extends State<CalculatorScreen> {
               ),
               Padding(
                 padding: const EdgeInsets.only(
-                    left: 16.0, right: 20.0, bottom: 8.0, top: 20),
+                    left: 8.0, right: 8.0, bottom: 8.0, top: 20),
                 child: Column(
                     mainAxisAlignment: MainAxisAlignment.center,
                     crossAxisAlignment: CrossAxisAlignment.end,
                     children: [
                       ...operators
-                          .sublist(0,
-                              operators.length - 1) // Exclude the last element
+                          .sublist(0, operators.length - 1)
                           .map(
                             (e) => Container(
                               margin: EdgeInsets.symmetric(vertical: 8.0),
